@@ -6,5 +6,15 @@ jobs:
   train-model:
     runs-on: ubuntu-latest
     steps:
+    - name: check out repo
+      uses: actions/checkout@v2
+    - name: install az ml extension
+      run: az extension add -n ml -y
+    - name: azure login
+      uses: azure/login@v1
+      with:
+        creds: ${{secrets.AZURE_CREDENTIALS}}
+    - name: set current directory
+      run: cd src
     - name: Trigger Azure Machine Learning job
       run: az ml job create --file src/model/job.yml --resource-group rg-dev-mlops --workspace-name mlw-dev-mlops

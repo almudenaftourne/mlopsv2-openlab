@@ -1,4 +1,6 @@
-name: push-trigger
+# This is a basic workflow to help you get started with Actions
+
+name: CI
 
 on:
   push:
@@ -22,4 +24,3 @@ jobs:
       run: |
         cd src
         az ml job create --file job.yml --resource-group rg-dev-mlops --workspace-name mlw-dev-mlops
-      

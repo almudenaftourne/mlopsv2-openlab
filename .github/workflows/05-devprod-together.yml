@@ -1,0 +1,43 @@
+name: run in dev and prod
+
+on:
+  workflow_dispatch
+
+jobs:
+  train-model:
+    runs-on: ubuntu-latest
+    environment:
+      name: development
+    steps:
+    - name: check out repo
+      uses: actions/checkout@v2
+    - name: install az ml extension
+      run: az extension add -n ml -y
+    - name: azure login
+      uses: azure/login@v1
+      with:
+        creds: ${{secrets.AZURE_CREDENTIALS}}
+    - name: Trigger Azure Machine Learning job
+      id: aml_trainmodel
+      run: |
+        cd src
+        az ml job create --file job.yml --resource-group rg-dev-mlops --workspace-name mlw-dev-mlops
+        az ml model create --name diabetes-model --version 1 --path azureml://jobs/dreamy_pin_6dmy3tcsr1/outputs/artifacts/paths/model/ --resource-group rg-dev-mlops --workspace-name mlw-dev-mlops
+  list-models:
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+    steps:
+    - name: check out repo
+      uses: actions/checkout@v2
+    - name: install az ml extension
+      run: az extension add -n ml -y
+    - name: azure login
+      uses: azure/login@v1
+      with:
+        creds: ${{secrets.AZURE_CREDENTIALS}}
+    - name: List models in workspace
+      id: aml_listmodels
+      run: |
+        cd src
+        az ml model list --resource-group rg-dev-mlops --workspace-name mlw-dev-mlops

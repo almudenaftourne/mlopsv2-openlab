@@ -1,0 +1,25 @@
+# This is a basic workflow to help you get started with Actions
+
+name: Deploy model to endpoint
+
+on:
+  workflow_dispatch
+
+jobs:
+  train-model:
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+    steps:
+    - name: check out repo
+      uses: actions/checkout@v2
+    - name: install az ml extension
+      run: az extension add -n ml -y
+    - name: azure login
+      uses: azure/login@v1
+      with:
+        creds: ${{secrets.AZURE_CREDENTIALS}}
+    - name: Deploy model to online endpoint
+      run: |
+        cd src 
+        az ml online-endpoint create --file endpoint.yml --resource-group rg-dev-mlops --workspace-name mlw-dev-mlops

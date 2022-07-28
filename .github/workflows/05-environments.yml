@@ -22,5 +22,6 @@ jobs:
       run: |
         cd src
         az ml job create --file job.yml --resource-group rg-dev-mlops --workspace-name mlw-dev-mlops
+        az ml model create --name diabetes-model --version 1 --path azureml://jobs/dreamy_pin_6dmy3tcsr1/outputs/artifacts/paths/model/--resource-group rg-dev-mlops --workspace-name mlw-dev-mlops
 
           
